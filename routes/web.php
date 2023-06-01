@@ -6,10 +6,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 //mis rutas pantallas
-Route::get('/index', function () { 
-    return Inertia::render('index'); 
-})->name('index');
-
+Route::get('/index', function () { return Inertia::render('index'); })->name('index');
+Route::get('/autos', function () { return Inertia::render('autos'); })->name('autos');
 Route::get('/createPerson', function () { return Inertia::render('createPerson'); })->name('createPerson');
 Route::get('/createAuto', function () { return Inertia::render('createAuto'); })->name('createAuto');
 Route::get('/updatePerson', function () { return Inertia::render('updatePerson'); })->name('updatePerson');
@@ -25,7 +23,8 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
+//->name('test.token')
+//["url"=>route('test.token')]
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

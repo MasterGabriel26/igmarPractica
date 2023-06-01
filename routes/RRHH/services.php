@@ -31,6 +31,9 @@ Route::prefix('v1.0')->group(function () {
     Route::get('/catalogo',[CatalogoController::class, 'index'])->name('catalogo');
 });
 
+
+
+
 /*
 
     tabla persona, una persona puede tener muchos autos

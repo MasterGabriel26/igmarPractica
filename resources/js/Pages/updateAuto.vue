@@ -4,7 +4,7 @@
         <form @submit="updateAuto" class="update-auto-form">
             <div>
                 <label for="id">ID del auto:</label>
-                <input type="text" id="id" v-model="id" required>
+                <input type="text" id="id" v-model="id" readonly>
             </div>
             <div>
                 <label for="marca">Marca:</label>
@@ -20,11 +20,11 @@
             </div>
             <div>
                 <label for="year">Año:</label>
-                <input type="text" id="year" v-model="year" required>
+                <input type="text" id="year" v-model="year" readonly>
             </div>
             <div>
                 <label for="descripcion">Descripción:</label>
-                <input type="text" id="descripcion" v-model="descripcion" required>
+                <input type="text" id="descripcion" v-model="descripcion" readonly>
             </div>
             <div>
                 <label for="persona_id">ID de la persona:</label>
@@ -106,7 +106,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #0d202b3a;
+  background-color: #d9effdee;
 }
 
 .update-auto-form {

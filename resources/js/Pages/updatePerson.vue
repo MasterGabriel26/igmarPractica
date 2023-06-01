@@ -16,7 +16,7 @@
             </div>
             <div>
                 <label for="color">ID:</label>
-                <input type="text" id="color" v-model="id" required>
+                <input type="text" id="color" v-model="id" readonly>
             </div>
             <div>
                 <button type="submit">Actualizar Persona</button>

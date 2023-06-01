@@ -51,17 +51,17 @@ export default {
 }
 
 .crud-button--primary {
-    background-color: #007bff;
+    background-color: #26678d;
     color: white;
 }
 
 .crud-button--secondary {
-    background-color: #70b475;
+    background-color: #36743f;
     color: white;
 }
 
 .crud-button--delete {
-    background-color: #f32020;
+    background-color: #1060c9;
     color: white;
 }
 
@@ -78,6 +78,6 @@ export default {
 }
 
 .crud-button:hover {
-    background-color: #0D202B;
+    background-color: #566670;
 }
 </style>

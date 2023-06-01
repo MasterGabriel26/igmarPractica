@@ -2,31 +2,8 @@
   <div class="container">
     <div class="container__tables">
       <div class="title__container">
-        <h1>Modelos</h1>
-      </div>
-      <div class="container__tables--table">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Modelo</th>
-              <th>Descripcion</th>
-              <th>Año</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="modelo in modelos" :key="modelo.id">
-              <td>{{ modelo.id }}</td>
-              <td>{{ modelo.nombre_modelo }}</td>
-              <td>{{ modelo.descripcion }}</td>
-              <td>{{ modelo.year }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="title__container">
         <h1>Personas</h1>
-        <DefaultButtonCrud color="primary" size="small" @click="createItem('personas')">Crear</DefaultButtonCrud>
+        <DefaultButtonCrud color="primary" size="small" @click="goAutos()">Autos ></DefaultButtonCrud>
       </div>
       <div class="container__tables--table">
         <table>
@@ -48,7 +25,7 @@
               <td>
                 <DefaultButtonCrud color="secondary" size="small" @click="editItem('personas', persona)">Editar
                 </DefaultButtonCrud>
-                <DefaultButtonCrud color="delete" size="small" @click="showPersonasModal = true; selectedItem = persona">
+                <DefaultButtonCrud color="delete" size="small" @click="deleteItem(persona)">
                   Eliminar
                 </DefaultButtonCrud>
               </td>
@@ -56,64 +33,8 @@
           </tbody>
         </table>
       </div>
-      <div class="title__container">
-        <h1>Autos</h1>
-        <DefaultButtonCrud color="primary" size="small" @click="createItem('autos')">Crear</DefaultButtonCrud>
-      </div>
-      <div class="container__tables--table">
-        <table>
-          <thead>
-            <tr>
-              <th>id</th>
-              <th>marca</th>
-              <th>modelo</th>
-              <th>color</th>
-              <th>Year</th>
-              <th>Descripcion</th>
-              <th>persona</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="auto in autos" :key="auto.id">
-              <td>{{ auto.id }}</td>
-              <td>{{ auto.marca }}</td>
-              <td>{{ auto.modelo }}</td>
-              <td>{{ auto.color }}</td>
-              <td>{{ auto.year }}</td>
-              <td>{{ auto.descripcion }}</td>
-              <td>{{ auto.persona_id }}</td>
-              <td>
-                <DefaultButtonCrud color="secondary" size="small" @click="editItem('autos', null, auto)">Editar
-                </DefaultButtonCrud>
-                <DefaultButtonCrud color="delete" size="small" @click="showAutosModal = true; selectedItem = auto">
-                  Eliminar
-                </DefaultButtonCrud>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div v-if="showPersonasModal" class="modal">
-      <div class="modal-content">
-        <h2>Confirmar eliminación (Personas)</h2>
-        <p>¿Estás seguro de que deseas eliminar esta persona?</p>
-        <div class="modal-actions">
-          <button class="btn-primary" @click="confirmDelete('personas')">Eliminar</button>
-          <button class="btn-primary" @click="closeModal('personas')">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="showAutosModal" class="modal">
-      <div class="modal-content">
-        <h2>Confirmar eliminación (Autos)</h2>
-        <p>¿Estás seguro de que deseas eliminar este auto?</p>
-        <div class="modal-actions">
-          <button class="btn-primary" @click="confirmDelete('autos')">Eliminar</button>
-          <button class="btn-primary" @click="closeModal('autos')">Cancelar</button>
-        </div>
+      <div class="title__container2">
+        <DefaultButtonCrud color="primary" size="small" @click="createItem('personas')">Crear Persona</DefaultButtonCrud>
       </div>
     </div>
   </div>
@@ -129,28 +50,14 @@ export default {
   },
   data() {
     return {
-      modelos: [],
       personas: [],
-      autos: [],
-      showPersonasModal: false,
-      showAutosModal: false,
     };
   },
   created() {
-    this.fetchModelos();
     this.fetchPersonas();
-    this.fetchAutos();
   },
   methods: {
-    fetchModelos() {
-      axios.get('http://127.0.0.1:8000/api/v1.0/catalogo')
-        .then(response => {
-          this.modelos = response.data.data;
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
+
     fetchPersonas() {
       axios.get('http://127.0.0.1:8000/api/v1.0/personas')
         .then(response => {
@@ -160,79 +67,47 @@ export default {
           console.error(error);
         });
     },
-    fetchAutos() {
-      axios.get('http://127.0.0.1:8000/api/v1.0/autos')
+    createItem(table) {
+      if (table === 'personas') {
+        window.location.href = '/createPerson';
+      }
+    },
+    goAutos() {
+      window.location.href = '/autos';
+    },
+    editItem(table, persona) {
+      if (table === 'personas' && persona) {
+        window.location.href = '/updatePerson?id=' + persona.id + '&nombre=' + persona.nombre + '&ap_paterno=' + persona.ap_paterno + '&ap_materno=' + persona.ap_materno;
+      }
+    },
+    deleteItem(persona) {
+      const deleteUrl = `http://127.0.0.1:8000/api/v1.0/persona/delete/${persona.id}`;
+
+      axios
+        .delete(deleteUrl)
         .then(response => {
-          this.autos = response.data.data;
+          if (response.status === 201) {
+            const index = this.personas.findIndex(p => p.id === persona.id);
+            if (index !== -1) {
+              this.personas.splice(index, 1);
+              this.updatePersonasTable();
+            }
+          }
         })
         .catch(error => {
           console.error(error);
         });
     },
-    createItem(table) {
-      if (table === 'personas') {
-        window.location.href = '/createPerson';
-      }
-      if (table === 'autos') {
-        window.location.href = '/createAuto';
-      }
-    },
-    editItem(table, persona, auto) {
-      if (table === 'personas' && persona) {
-        window.location.href = '/updatePerson?id=' + persona.id + '&nombre=' + persona.nombre + '&ap_paterno=' + persona.ap_paterno + '&ap_materno=' + persona.ap_materno;
-      }
-      if (table === 'autos' && auto) {
-        window.location.href = '/updateAuto?id=' + auto.id + '&marca=' + auto.marca + '&modelo=' + auto.modelo + '&color=' + auto.color + '&year=' + auto.year + '&descripcion=' + auto.descripcion + '&persona_id=' + auto.persona_id;
-      }
-    },
-    deleteItem(table) {
-      if (table === 'personas') {
-        this.showPersonasModal = true;
-      }
-      if (table === 'autos') {
-        this.showAutosModal = true;
-      }
-    },
-    closeModal(table) {
-      if (table === 'personas') {
-        this.showPersonasModal = false;
-      }
-      if (table === 'autos') {
-        this.showAutosModal = false;
-      }
-    },
-    confirmDelete(table) {
-      const confirmDelete = confirm("¿Estás seguro de que deseas eliminar este elemento?");
 
-      if (confirmDelete) {
-        let deleteUrl = '';
-
-        if (table === 'personas') {
-          deleteUrl = `http://127.0.0.1:8000/api/v1.0/persona/delete/${this.selectedItem.id}`;
-        } else if (table === 'autos') {
-          deleteUrl = `http://127.0.0.1:8000/api/v1.0/autos/delete/${this.selectedItem.id}`;
-        }
-
-        axios
-          .delete(deleteUrl)
-          .then(response => {
-            if (response.status === 200) {
-              if (table === 'personas') {
-                this.personas = this.personas.filter(persona => persona.id !== this.selectedItem.id);
-                this.closeModal(table);
-              } else if (table === 'autos') {
-                this.autos = this.autos.filter(auto => auto.id !== this.selectedItem.id);
-                this.closeModal(table);
-              }
-              window.history.back();
-              this.closeModal(table);
-            }
-          })
-          .catch(error => {
-            alert("Error al eliminar el elemento");
-          });
-      }
-    },
+    updatePersonasTable() {
+      axios.get('http://127.0.0.1:8000/api/v1.0/personas')
+        .then(response => {
+          this.personas = response.data.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
   }
 }
 </script>
@@ -242,6 +117,7 @@ body {
   padding: 0;
   margin: 0;
   width: 100%;
+  height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
   display: flex;
@@ -252,18 +128,27 @@ body {
 
 .title__container {
   text-align: center;
+  align-items: center;
   color: white;
   width: 100%;
   display: flex;
-  justify-content: center;
-  margin-top: 1vh;
+  margin-bottom: 1vh;
+  justify-content: space-between;
+}
+
+.title__container2 {
+  text-align: center;
+  align-items: center;
+  color: white;
+  width: 100%;
+  display: flex;
+  justify-content: right;
 }
 
 h1 {
-  width: 20%;
   font-size: 20px;
-  border-radius: 10px 10px 0px 0px;
-  background-color: #0d202b;
+  color: black;
+  font-weight: bold;
 }
 
 .container {
@@ -279,6 +164,7 @@ h1 {
   margin: 0 2vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   height: 100%;
 }
 
@@ -302,7 +188,7 @@ table {
 thead {
   position: sticky;
   top: 0;
-  background-color: #0D202B;
+  background-color: #1e212c;
   color: white;
 }
 
@@ -407,14 +293,17 @@ tbody tr:hover {
   padding: 5px 10px;
   font-size: 12px;
 }
-h2{
+
+h2 {
   font-weight: bold;
   text-align: start;
   margin-bottom: 3vh;
 }
-p{
+
+p {
   text-align: start;
 }
+
 .btn-delete-small {
   background-color: #FF5858;
   color: white;
