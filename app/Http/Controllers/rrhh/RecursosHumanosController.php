@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\rrhh\persona;
 use App\Models\rrhh\Auto;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class RecursosHumanosController extends Controller
@@ -18,7 +19,26 @@ class RecursosHumanosController extends Controller
             "status" => 200
         ], 200);
     }
-
+    public function show($id)
+    {
+        $persona = Persona::find($id);
+        if (!$persona) {
+            return response()->json([
+                "msg" => "La persona no existe",
+                "status" => 404
+            ], 404);
+        }
+        return response()->json([
+            "msg" => "Persona encontrada",
+            "data" => [
+                "id" => $persona->id,
+                "nombre" => $persona->nombre,
+                "ap_paterno" => $persona->ap_paterno,
+                "ap_materno" => $persona->ap_materno
+            ],
+            "status" => 200
+        ], 200);
+    }
     public function create(Request $request){
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|max:60',
@@ -63,6 +83,7 @@ class RecursosHumanosController extends Controller
             ], 406);
 
         $persona = persona::find($id);
+        
         if(!$persona)
                 return response()->json([
                 "msg" => "La persona no existe",

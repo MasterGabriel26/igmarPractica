@@ -1,18 +1,21 @@
 <template>
   <div class="update-auto-container">
-    <h1>Crear Nueva Persona</h1>
+    <div class="navContainer">
+      <h1>Crear Nueva Persona</h1>
+      <navigation-link href="/index" class="nav">Volver</navigation-link>
+    </div>
     <form @submit="createPerson" class="update-auto-form">
       <div>
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" v-model="nombre" required>
+        <input type="text" id="nombre" v-model="nombre" required placeholder="Ingresa el nombre">
       </div>
       <div>
         <label for="ap_paterno">Apellido Paterno:</label>
-        <input type="text" id="ap_paterno" v-model="ap_paterno" required>
+        <input type="text" id="ap_paterno" v-model="ap_paterno" required placeholder="Ingresa apellido paterno">
       </div>
       <div>
         <label for="ap_materno">Apellido Materno:</label>
-        <input type="text" id="ap_materno" v-model="ap_materno" required>
+        <input type="text" id="ap_materno" v-model="ap_materno" required placeholder="Ingresa apellido materno">
       </div>
       <div>
         <button type="submit">Crear Persona</button>
@@ -22,7 +25,11 @@
 </template>
   
 <script>
+import NavigationLink from '../Components/NavLink.vue';
 export default {
+  components: {
+    NavigationLink
+  },
   data() {
     return {
       nombre: '',
@@ -50,6 +57,44 @@ export default {
 </script>
   
 <style scoped>
+.navContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 30%;
+  margin-bottom: 1vh;
+}
+.nav{
+  background-color: #0D202B;
+  border-radius: 3px;
+  align-items: center;
+  text-align: center;
+  transition: .4s;
+  align-content: center;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.21);
+}
+.nav:hover{
+  background-color: #0D202B;
+  border-radius: 3px;
+  align-items: center;
+  text-align: center;
+  transform: rotate(10deg);
+  align-content: center;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.21);
+}
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0d202b3a;
+}
 .update-auto-container {
   display: flex;
   flex-direction: column;

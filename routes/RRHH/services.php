@@ -14,6 +14,7 @@ Route::prefix('v1.0')->group(function () {
 
     //PERSONAS
     Route::get('personas',[RecursosHumanosController::class, 'index']);
+    Route::get('persona/{id}',[RecursosHumanosController::class, 'show']);
     Route::post('persona/create',[RecursosHumanosController::class, 'create']);
     Route::put('persona/update/{id}', [RecursosHumanosController::class, 'update'])->where('id','[0-9]+');
     Route::delete('persona/delete/{id}', [RecursosHumanosController::class, 'destroy'])->where('id','[0-9]+');
@@ -21,10 +22,10 @@ Route::prefix('v1.0')->group(function () {
 
     //AUTOS
     Route::get('/autos',[AutosController::class, 'index']);
-
+    Route::get('/auto/{id}',[AutosController::class, 'show']);
     Route::post('/persona/{id}/autos/create',[AutosController::class, 'create']); 
-    Route::put('/persona/{persona_id}/autos/update/{auto_id}',[AutosController::class, 'update']);
-    Route::delete('/autos/delete/{id}',[AutosController::class, 'destroy']);
+    Route::put('/persona/{persona_id}/autos/update/{auto_id}',[AutosController::class, 'update'])->where('id','[0-9]+');
+    Route::delete('/autos/delete/{id}',[AutosController::class, 'destroy'])->where('id','[0-9]+');
     Route::put('/autos/restore/{id}',[AutosController::class, 'restore']);
 
     //CATALOGO

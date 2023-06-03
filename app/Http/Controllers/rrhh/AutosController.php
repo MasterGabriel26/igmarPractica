@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\rrhh\Auto;
 use App\Models\rrhh\Modelo;
 use App\Models\rrhh\persona;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class AutosController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $autos = Auto::all();
         return response()->json([
             "msg" => "Los Autos fueron cargados de manera exitosa",
@@ -19,7 +21,29 @@ class AutosController extends Controller
             "status" => 200
         ], 200);
     }
-    public function create(Request $request, $persona_id){
+    public function show($id)
+    {
+        $autos = Auto::find($id);
+        if (!$autos) {
+            return response()->json([
+                "msg" => "El auto no existe ",
+                "status" => 404
+            ], 404);
+        }
+        return response()->json([
+            "msg" => "Auto encontrada",
+            "data" => [
+                "id" => $autos->id,
+                "marca" => $autos->marca,
+                "modelo" => $autos->modelo,
+                "color" => $autos->color,
+                "persona_id" => $autos->persona_id
+            ],
+            "status" => 200
+        ], 200);
+    }
+    public function create(Request $request, $persona_id)
+    {
         $validator = Validator::make($request->all(), [
             'marca' => 'required|max:60',
             'modelo' => 'required|max:60',
@@ -41,7 +65,7 @@ class AutosController extends Controller
         $auto->persona_id = $persona_id;
 
         $modelo = Modelo::where('nombre_modelo', $request->modelo)->first();
-        if ($modelo){
+        if ($modelo) {
             $auto->modelo_id = $modelo->id;
             $auto->modelo = $modelo->nombre_modelo;
             $auto->year = $modelo->year;
@@ -60,7 +84,8 @@ class AutosController extends Controller
         ], 500);
     }
 
-    public function update(Request $request, $persona_id, $auto_id){
+    public function update(Request $request, $persona_id, $auto_id)
+    {
         $validator = Validator::make($request->all(), [
             'marca' => 'required|max:60',
             'modelo' => 'required',
@@ -69,11 +94,12 @@ class AutosController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 "msg" => "Error en las validaciones",
-                "data" => $validator->errors(), 
+                "data" => $validator->errors(),
                 "status" => 406
             ], 406);
         }
         $auto = Auto::find($auto_id);
+
         if (!$auto)
             return response()->json([
                 "msg" => "El auto no existe no existe",
@@ -86,7 +112,7 @@ class AutosController extends Controller
         $auto->color = $request->color;
         $auto->persona_id = $persona_id;
         $modelo = Modelo::where('nombre_modelo', $request->modelo)->first();
-        if (!$modelo) 
+        if (!$modelo)
             return response()->json([
                 "msg" => "El auto no existe",
                 "data" => $auto_id,
@@ -103,9 +129,10 @@ class AutosController extends Controller
         ], 201);
     }
 
-    public function destroy($auto_id){
+    public function destroy($auto_id)
+    {
         $auto = Auto::find($auto_id);
-        if (!$auto)  
+        if (!$auto)
             return response()->json([
                 "msg" => "El auto no existe",
                 "status" => $auto_id
@@ -117,9 +144,10 @@ class AutosController extends Controller
         ], 201);
     }
 
-    public function restore($auto_id){
+    public function restore($auto_id)
+    {
         $auto = Auto::withTrashed()->find($auto_id);
-        if (!$auto) 
+        if (!$auto)
             return response()->json([
                 "msg" => "Auto no encontrado",
                 "status" => 404
@@ -128,6 +156,6 @@ class AutosController extends Controller
         return response()->json([
             "msg" => "Auto restaurado satisfactoriamente",
             "status" => 201
-        ], 201); 
+        ], 201);
     }
 }

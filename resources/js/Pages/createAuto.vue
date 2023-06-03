@@ -1,28 +1,41 @@
 <template>
   <div class="update-auto-container">
     <form @submit="createAuto" class="update-auto-form">
-      <h1>Crear Nuevo Auto</h1>
+      <div class="navContainer">
+        <h1>Crear Nuevo Auto</h1>
+        <navigation-link href="/autos" class="nav">Volver</navigation-link>
+      </div>
       <div>
         <label for="marca">Marca:</label>
-        <input type="text" id="marca" v-model="marca" required>
+        <input type="text" id="marca" v-model="marca" required placeholder="Ingresa la marca">
       </div>
       <div>
         <label for="modelo">Modelo:</label>
-        <input type="text" id="modelo" v-model="modelo" required>
+        <select v-model="modelo" required>
+          <option value="">Seleccione un modelo</option>
+          <option v-for="modelo in modelos" :key="modelo.id" :value="modelo.nombre_modelo">
+            {{ modelo.nombre_modelo }}
+          </option>
+        </select>
       </div>
       <div>
         <label for="color">Color:</label>
-        <input type="text" id="color" v-model="color" required>
+        <input type="text" id="color" v-model="color" required placeholder="Ingresa el color">
       </div>
       <div>
         <label for="color">Persona:</label>
-        <input type="text" id="color" v-model="persona_id" required>
+        <select v-model="persona_id" required>
+          <option value="">Seleccione una persona</option>
+          <option v-for="persona in personas" :key="persona.id" :value="persona.id">
+            {{ persona.id + '&nbsp;&nbsp;&nbsp;' + persona.nombre }}
+          </option>
+        </select>
       </div>
       <div>
         <button type="submit">Crear Auto</button>
       </div>
     </form>
-    <div class ="tableContainer">
+    <div class="tableContainer">
       <div class="title__container">
         <h2>Modelos</h2>
       </div>
@@ -51,18 +64,24 @@
 </template>
 
 <script>
+import NavigationLink from '../Components/NavLink.vue';
 export default {
+  components: {
+    NavigationLink
+  },
   data() {
     return {
-       modelos: [],
+      personas: [],
+      modelos: [],
       marca: '',
       modelo: '',
       color: '',
       persona_id: ''
     };
   },
-  created(){
+  created() {
     this.fetchModelos();
+    this.fetchPersonas();
   },
   methods: {
     fetchModelos() {
@@ -74,7 +93,20 @@ export default {
           console.error(error);
         });
     },
+    fetchPersonas() {
+      axios.get('http://127.0.0.1:8000/api/v1.0/personas') // Actualiza la URL al endpoint correcto para obtener las personas
+        .then(response => {
+          this.personas = response.data.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
     createAuto() {
+      if (!this.persona_id) {
+        alert('Por favor, proporcione un ID de persona válido.');
+        return;
+      }
       axios.post(`http://127.0.0.1:8000/api/v1.0/persona/${this.persona_id}/autos/create`, {
         marca: this.marca,
         modelo: this.modelo,
@@ -94,6 +126,35 @@ export default {
 </script>
   
 <style scoped>
+.navContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1vh;
+}
+
+.nav {
+  background-color: #0D202B;
+  border-radius: 3px;
+  align-items: center;
+  text-align: center;
+  transition: .4s;
+  align-content: center;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.21);
+}
+
+.nav:hover {
+  background-color: #0D202B;
+  border-radius: 3px;
+  align-items: center;
+  text-align: center;
+  transform: rotate(10deg);
+  align-content: center;
+  color: rgb(255, 255, 255);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.21);
+}
+
 .update-auto-container {
   display: flex;
   flex-wrap: wrap;
@@ -135,6 +196,11 @@ input[type="text"] {
   width: 100%;
 }
 
+select {
+  width: 100%;
+  margin-bottom: 1vh;
+}
+
 button[type="submit"] {
   padding: 10px 20px;
   background-color: #0D202B;
@@ -145,6 +211,7 @@ button[type="submit"] {
   transition: .5s;
   width: 100%;
 }
+
 button:hover {
   background-color: #22526e;
 }
@@ -178,6 +245,7 @@ h2 {
   display: flex;
   flex-direction: column;
 }
+
 .descripcion-column {
   max-width: 50vh;
   overflow: hidden;
@@ -186,7 +254,8 @@ h2 {
   padding: 0vh 2vh;
   font-style: italic;
 }
-.tableContainer{
+
+.tableContainer {
   width: 50%;
   margin: 0vh 15vh;
 }
@@ -209,7 +278,7 @@ th {
 }
 
 tbody tr:hover {
-  background-color: #9BBAA9;
+  background-color: #adb3af;
   color: white;
   cursor: pointer;
 }
@@ -217,14 +286,17 @@ tbody tr:hover {
 td {
   padding: 2vh 0vh;
 }
-td:nth-child(2){
+
+td:nth-child(2) {
   padding: 2vh 0vh;
   font-weight: bold;
 }
-td:nth-child(4){
+
+td:nth-child(4) {
   padding: 2vh 0vh;
   font-weight: bold;
 }
+
 .container__tables--table::-webkit-scrollbar {
   width: 5px;
   height: 5px;

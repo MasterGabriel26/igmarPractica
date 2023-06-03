@@ -1,9 +1,12 @@
 <template lang="">
+    <navigation-link href="/index" class="nav">Personas</navigation-link>
+    <navigation-link @click="createItem('autos')" class="nav2">Crear Auto</navigation-link>
+
     <div class="container">
         <div class="container__tables">
             <div class="title__container">
                 <h1>Autos</h1>
-                <DefaultButtonCrud color="primary" size="small" @click="goPerson()">&#60; Personas</DefaultButtonCrud>
+                <!-- <DefaultButtonCrud color="primary" size="small" @click="goPerson()">&#60; Personas</DefaultButtonCrud> -->
             </div>
       <div class="container__tables--table">
         <table>
@@ -39,19 +42,21 @@
           </tbody>
         </table>
       </div>
-            <div class="title__container2">
+            <!-- <div class="title__container2">
                 <DefaultButtonCrud color="primary" size="small" @click="createItem('autos')">Crear Auto ></DefaultButtonCrud>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
 <script>
 import DefaultButtonCrud from '../Components/DefaultButtonCrud.vue';
+import NavigationLink from '../Components/NavLink.vue';
 import axios from 'axios';
 
 export default {
     components: {
-        DefaultButtonCrud
+        DefaultButtonCrud,
+        NavigationLink
     },
     data() {
         return {
@@ -81,7 +86,7 @@ export default {
         },
         editItem(table, auto) {
             if (table === 'autos' && auto) {
-                window.location.href = '/updateAuto?id=' + auto.id + '&marca=' + auto.marca + '&modelo=' + auto.modelo + '&color=' + auto.color + '&year=' + auto.year + '&descripcion=' + auto.descripcion + '&persona_id=' + auto.persona_id;
+                window.location.href = `/updatePerson/${auto.persona_id}/updateAuto/${auto.id}`;
             }
         },
         deleteItem(auto) {
@@ -116,6 +121,48 @@ export default {
 }
 </script>
 <style>
+.nav {
+  background-color: #ffffff;
+  color: black;
+  width: 50%;
+  align-items: center;
+  text-align: center;
+  padding: 1vh;
+  transition: .4s;
+  border-radius: 0px 0px 0px 10px;
+  box-shadow: -5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+.nav2{
+  background-color: #ffffff;
+  color: black;
+  width: 50%;
+  align-items: center;
+  text-align: right;
+  padding: 1vh 0vh;
+  transition: .4s;
+  border-radius: 0px 0px 10px 0px;
+  box-shadow: 5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+.nav:hover {
+  background-color: #1e212c;
+  color: rgb(255, 255, 255);
+  width: 50%;
+  align-items: center;
+  text-align: center;
+  padding: 1vh 0vh 2vh 1vh;
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: -5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+.nav2:hover {
+  background-color: #1e212c;
+  color: rgb(255, 255, 255);
+  width: 50%;
+  align-items: center;
+  text-align: right;
+  padding: 1vh 0vh 2vh 1vh;
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: 5px 0px 8px rgba(0, 0, 0, 0.24);
+}
 body {
     padding: 0;
     margin: 0;
@@ -156,7 +203,7 @@ h1 {
 
 .container {
     width: 100%;
-    height: 100vh;
+    height: 90vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -236,51 +283,55 @@ tbody tr:hover {
 }
 
 @media (max-width: 768px) {
-  table {
-    width: auto; /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
-  }
+    table {
+        width: auto;
+        /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
+    }
 
-  th, td {
-    white-space: nowrap; /* Evita el ajuste de línea en celdas de la tabla */
-  }
+    th,
+    td {
+        white-space: nowrap;
+        /* Evita el ajuste de línea en celdas de la tabla */
+    }
 }
 
 @media (max-width: 600px) {
-  .container__tables--table {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    max-height: 40vh;
-  }
+    .container {
+        display: flex;
+        justify-content: center;
+        ;
+        width: 100%;
+    }
 
-  .table-wrapper {
-    overflow-x: auto;
-  }
-  
-  table {
-    width: auto; /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
-  }
+    .container__tables--table {
+        width: 100%;
+        max-height: 40vh;
+    }
 
-  th, td {
-    white-space: nowrap; /* Evita el ajuste de línea en celdas de la tabla */
-  }
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: auto;
+        max-height: 40vh;
+        /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
+    }
+
+    tr {
+        display: flex;
+        flex-direction: column;
+    }
+
+    tr th {
+       display: none;
+    }
+
+    th,
+    td {
+        white-space: nowrap;
+        /* Evita el ajuste de línea en celdas de la tabla */
+    }
 }
-@media (max-width: 300px) {
-  .container__tables--table {
-    width: 100%;
-    max-height: 50vh;
-  }
 
-  .table-wrapper {
-    overflow-x: auto;
-  }
-  
-  table {
-    width: auto; /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
-  }
-
-  th, td {
-    white-space: nowrap; /* Evita el ajuste de línea en celdas de la tabla */
-  }
-}
 </style>

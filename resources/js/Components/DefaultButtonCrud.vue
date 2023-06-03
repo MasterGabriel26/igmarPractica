@@ -51,7 +51,7 @@ export default {
 }
 
 .crud-button--primary {
-    background-color: #26678d;
+    background-color: #1e212c;
     color: white;
 }
 
@@ -61,7 +61,7 @@ export default {
 }
 
 .crud-button--delete {
-    background-color: #1060c9;
+    background-color: #2caa5c;
     color: white;
 }
 

@@ -27,8 +27,8 @@
   
 <script>
 import axios from 'axios';
+
 export default {
-    props: ['personaSeleccionada'],
     data() {
         return {
             nombre: '',
@@ -38,16 +38,20 @@ export default {
         };
     },
     created() {
-        const urlParams = new URLSearchParams(window.location.search);
-        this.id = urlParams.get('id');
-        this.nombre = urlParams.get('nombre');
-        this.ap_paterno = urlParams.get('ap_paterno');
-        this.ap_materno = urlParams.get('ap_materno');
+        // const urlParams = new URLSearchParams(window.location.search);
+        // this.id = urlParams.get('id');
+        // this.nombre = urlParams.get('nombre');
+        // this.ap_paterno = urlParams.get('ap_paterno');
+        // this.ap_materno = urlParams.get('ap_materno');
+        const id = window.location.pathname.split('/').pop();
+        this.id = id;
+        this.fetchPerson(id);
     },
     methods: {
         fetchPerson(id) {
-            axios.get(`http://127.0.0.1:8000/api/v1.0/personas/${id}`)
+            axios.get(`/api/v1.0/persona/${id}`)
                 .then(response => {
+                    console.log(response.data)
                     const persona = response.data.data;
                     this.nombre = persona.nombre;
                     this.ap_paterno = persona.ap_paterno;
@@ -59,7 +63,11 @@ export default {
                 });
         },
         updatePerson() {
-            axios.put(`http://127.0.0.1:8000/api/v1.0/persona/update/${this.id}`, {
+            if (!this.nombre || !this.ap_paterno || !this.ap_materno) {
+                alert('Por favor, complete todos los campos requeridos.');
+                return;
+            }
+            axios.put(`/api/v1.0/persona/update/${this.id}`, {
                 nombre: this.nombre,
                 ap_paterno: this.ap_paterno,
                 ap_materno: this.ap_materno,

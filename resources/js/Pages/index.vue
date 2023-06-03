@@ -1,9 +1,12 @@
 <template>
+  <navigation-link href="/autos" class="nav">Autos</navigation-link>
+  <navigation-link @click="createItem('personas')" class="nav2">Crear persona</navigation-link>
+
   <div class="container">
     <div class="container__tables">
       <div class="title__container">
         <h1>Personas</h1>
-        <DefaultButtonCrud color="primary" size="small" @click="goAutos()">Autos ></DefaultButtonCrud>
+        <!-- <DefaultButtonCrud color="primary" size="small" @click="goAutos()">Autos ></DefaultButtonCrud> -->
       </div>
       <div class="container__tables--table">
         <table>
@@ -33,24 +36,27 @@
           </tbody>
         </table>
       </div>
-      <div class="title__container2">
+      <!-- <div class="title__container2">
         <DefaultButtonCrud color="primary" size="small" @click="createItem('personas')">Crear Persona</DefaultButtonCrud>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script>
 import DefaultButtonCrud from '../Components/DefaultButtonCrud.vue';
+import NavigationLink from '../Components/NavLink.vue';
 import axios from 'axios';
 
 export default {
   components: {
-    DefaultButtonCrud
+    DefaultButtonCrud,
+    NavigationLink
   },
   data() {
     return {
       personas: [],
+      selectedPersona: null
     };
   },
   created() {
@@ -59,7 +65,7 @@ export default {
   methods: {
 
     fetchPersonas() {
-      axios.get('http://127.0.0.1:8000/api/v1.0/personas')
+      axios.get('/api/v1.0/personas')
         .then(response => {
           this.personas = response.data.data;
         })
@@ -77,9 +83,10 @@ export default {
     },
     editItem(table, persona) {
       if (table === 'personas' && persona) {
-        window.location.href = '/updatePerson?id=' + persona.id + '&nombre=' + persona.nombre + '&ap_paterno=' + persona.ap_paterno + '&ap_materno=' + persona.ap_materno;
+        window.location.href = `/updatePerson/${persona.id}`;
       }
     },
+
     deleteItem(persona) {
       const deleteUrl = `http://127.0.0.1:8000/api/v1.0/persona/delete/${persona.id}`;
 
@@ -111,8 +118,224 @@ export default {
   }
 }
 </script>
+<!-- <template>
+  <div class="container">
+    <div class="container__tables">
+      <div class="title__container">
+        <h1>Personas</h1>
+        <DefaultButtonCrud color="primary" size="small" @click="goAutos()">Autos ></DefaultButtonCrud>
+      </div>
+      <div class="container__tables--table">
+        <table>
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>nombre</th>
+              <th>ap_paterno</th>
+              <th>ap_materno</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="persona in personas" :key="persona.id">
+              <td>{{ persona.id }}</td>
+              <td>{{ persona.nombre }}</td>
+              <td>{{ persona.ap_paterno }}</td>
+              <td>{{ persona.ap_materno }}</td>
+              <td>
+                <DefaultButtonCrud color="secondary" size="small" @click="openEditModal(persona)">Editar
+                </DefaultButtonCrud>
+                <DefaultButtonCrud color="delete" size="small" @click="deleteItem(persona)">
+                  Eliminar
+                </DefaultButtonCrud>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="title__container2">
+        <DefaultButtonCrud color="primary" size="small" @click="createItem('personas')">Crear Persona</DefaultButtonCrud>
+      </div>
+    </div>
 
+    <div class="modal" v-if="editModalOpen">
+      <div class="modal__content">
+        <h1>Actualizar persona</h1>
+        <form @submit.prevent="updatePerson">
+          <div>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" v-model="editPersona.nombre" required>
+          </div>
+          <div>
+            <label for="ap_paterno">Apellido Paterno:</label>
+            <input type="text" id="ap_paterno" v-model="editPersona.ap_paterno" required>
+          </div>
+          <div>
+            <label for="ap_materno">Apellido Materno:</label>
+            <input type="text" id="ap_materno" v-model="editPersona.ap_materno" required>
+          </div>
+          <div>
+            <label for="id">ID:</label>
+            <input type="text" id="id" v-model="editPersona.id" readonly>
+          </div>
+          <div>
+            <button type="submit">Actualizar Persona</button>
+          </div>
+        </form>
+        <button class="modal__close-button" @click="closeEditModal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import DefaultButtonCrud from '../Components/DefaultButtonCrud.vue';
+import axios from 'axios';
+
+export default {
+  components: {
+    DefaultButtonCrud
+  },
+  data() {
+    return {
+      personas: [],
+      editModalOpen: false,
+      editPersona: {
+        id: '',
+        nombre: '',
+        ap_paterno: '',
+        ap_materno: ''
+      }
+    };
+  },
+  created() {
+    this.fetchPersonas();
+  },
+  methods: {
+    fetchPersonas() {
+      axios.get('/api/v1.0/personas')
+        .then(response => {
+          this.personas = response.data.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    createItem(table) {
+      if (table === 'personas') {
+        window.location.href = '/createPerson';
+      }
+    },
+    goAutos() {
+      window.location.href = '/autos';
+    },
+    openEditModal(persona) {
+      this.editPersona = {
+        id: persona.id,
+        nombre: persona.nombre,
+        ap_paterno: persona.ap_paterno,
+        ap_materno: persona.ap_materno
+      };
+      this.editModalOpen = true;
+    },
+    closeEditModal() {
+      this.editModalOpen = false;
+    },
+    updatePerson() {
+      if (!this.editPersona.nombre || !this.editPersona.ap_paterno || !this.editPersona.ap_materno) {
+        alert('Por favor, complete todos los campos requeridos.');
+        return;
+      }
+      axios.put(`http://127.0.0.1:8000/api/v1.0/persona/update/${this.editPersona.id}`, {
+          nombre: this.editPersona.nombre,
+          ap_paterno: this.editPersona.ap_paterno,
+          ap_materno: this.editPersona.ap_materno,
+          id: this.editPersona.id
+        })
+        .then(response => {
+          console.info(response.data.msg);
+          this.closeEditModal();
+          this.fetchPersonas();
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    deleteItem(persona) {
+      const deleteUrl = `http://127.0.0.1:8000/api/v1.0/persona/delete/${persona.id}`;
+
+      axios
+        .delete(deleteUrl)
+        .then(response => {
+          if (response.status === 201) {
+            const index = this.personas.findIndex(p => p.id === persona.id);
+            if (index !== -1) {
+              this.personas.splice(index, 1);
+              this.updatePersonasTable();
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    updatePersonasTable() {
+      axios.get('http://127.0.0.1:8000/api/v1.0/personas')
+        .then(response => {
+          this.personas = response.data.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  }
+}
+</script> -->
 <style>
+
+.nav {
+  background-color: #ffffff;
+  color: black;
+  width: 50%;
+  align-items: center;
+  text-align: center;
+  padding: 1vh;
+  transition: .4s;
+  border-radius: 0px 0px 0px 10px;
+  box-shadow: -5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+.nav2{
+  background-color: #ffffff;
+  color: black;
+  width: 50%;
+  align-items: center;
+  text-align: right;
+  padding: 1vh 0vh;
+  transition: .4s;
+  border-radius: 0px 0px 10px 0px;
+  box-shadow: 5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+.nav:hover {
+  background-color: #1e212c;
+  color: rgb(255, 255, 255);
+  width: 50%;
+  align-items: center;
+  text-align: center;
+  padding: 1vh 0vh 2vh 1vh;
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: -5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+.nav2:hover {
+  background-color: #1e212c;
+  color: rgb(255, 255, 255);
+  width: 50%;
+  align-items: center;
+  text-align: right;
+  padding: 1vh 0vh 2vh 1vh;
+  border-radius: 0px 0px 10px 10px;
+  box-shadow: 5px 0px 8px rgba(0, 0, 0, 0.24);
+}
+
 body {
   padding: 0;
   margin: 0;
@@ -133,7 +356,7 @@ body {
   width: 100%;
   display: flex;
   margin-bottom: 1vh;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .title__container2 {
@@ -153,7 +376,7 @@ h1 {
 
 .container {
   width: 100%;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -197,7 +420,7 @@ th {
 }
 
 tbody tr:hover {
-  background-color: #9BBAA9;
+  background-color: #adb3af;
   color: white;
   cursor: pointer;
 }
@@ -316,5 +539,57 @@ p {
 
 .btn-delete-small:hover {
   background-color: #FF5858cc;
+}
+
+@media (max-width: 768px) {
+  table {
+    width: auto;
+    /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+    /* Evita el ajuste de línea en celdas de la tabla */
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    display: flex;
+    justify-content: center;
+    ;
+    width: 100%;
+  }
+
+  .container__tables--table {
+    width: 100%;
+    max-height: 40vh;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    width: auto;
+    max-height: 40vh;
+    /* Cambia el ancho de la tabla a automático para que se ajuste al contenido */
+  }
+
+  tr {
+    display: flex;
+    flex-direction: column;
+  }
+
+  tr th {
+    display: none;
+  }
+
+  th,
+  td {
+    white-space: nowrap;
+    /* Evita el ajuste de línea en celdas de la tabla */
+  }
 }
 </style>
