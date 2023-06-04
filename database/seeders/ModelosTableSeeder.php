@@ -161,7 +161,7 @@ class ModelosTableSeeder extends Seeder
                 'descripcion' => 'Superdeportivo con motor potente.',
                 'year' => '2030',
             ],
-        ];
+        ]; 
 
         foreach ($modelos as $modelo) {
             Modelo::create($modelo);
